@@ -6,20 +6,35 @@ const jwt = require('jsonwebtoken') ;
 const { JWT_SECRET } = require("../secrets/secrets-index") ;
 // const {validateUsername} = require('../middleware/restricted')
 
-router.post('/register',  async ( req, res, next ) => {
+const tempMiddleware = async ( req, res, next ) => {
+  const { username, password } = req.body;
+
+  if (! username || ! password) {
+    return res.status(400).json({ error: "username and password required" });
+  }
+
+  const existingUser = await User.findBy({ username });
+
+  if (existingUser) {
+    return res.status(400).json({ error: "username taken" });
+  }
+  next();
+}
+
+router.post('/register',  tempMiddleware, async ( req, res, next ) => {
   
       try {
     const { username, password } = req.body;
 
-    if (!username || !password) {
-      return res.status(400).json({ error: "username and password required" });
-    }
+    // if (!username || !password) {
+    //   return res.status(400).json({ error: "username and password required" });
+    // }
 
-    const existingUser = await User.findBy({ username });
+    // const existingUser = await User.findBy({ username });
 
-    if (existingUser) {
-      return res.status(400).json({ error: "username taken" });
-    }
+    // if (existingUser) {
+    //   return res.status(400).json({ error: "username taken" });
+    // }
 
     const hash = bcrypt.hashSync(password, 8);
 

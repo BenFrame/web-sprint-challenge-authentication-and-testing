@@ -1,9 +1,6 @@
 const validateUsername = (req, res, next) => {
   if(req.body.username === req.body.username){
-    next({
-      
-      message: 'username taken'
-    })
+    res.status(401).json({message: 'Username taken'})
   } else {
 
     next();
