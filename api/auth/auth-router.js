@@ -2,9 +2,9 @@ const express = require('express') ;
 const bcrypt = require('bcryptjs') ;
 const router = require('express').Router() ;
 const User = require('../user/user-model') ;
-const {validateUsername} = require('../middleware/restricted')
+// const {validateUsername} = require('../middleware/restricted')
 
-router.post('/register',validateUsername,  async ( req, res, next ) => {
+router.post('/register',  async ( req, res, next ) => {
   
       try {
     const { username, password } = req.body;
