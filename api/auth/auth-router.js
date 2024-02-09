@@ -6,13 +6,31 @@ const {validateUsername} = require('../middleware/restricted')
 
 router.post('/register',validateUsername,  async ( req, res, next ) => {
   
-    const { username, password } = req.body ;
-    const hash = bcrypt.hashSync(password, 8) ;
-    User.add({ username, password: hash})
-      .then(newUser => {
-        res.json(newUser)
-      })
-      .catch(next)
+      try {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({ error: "username and password required" });
+    }
+
+    const existingUser = await User.findBy({ username });
+
+    if (existingUser) {
+      return res.status(400).json({ error: "username taken" });
+    }
+
+    const hash = bcrypt.hashSync(password, 8);
+
+    const newUser = await User.add({ username, password: hash });
+
+    res.status(201).json({
+      id: newUser.id,
+      username: newUser.username,
+      password: newUser.password,
+    });
+  } catch (error) {
+    next(error);
+  }
   
   /*
     IMPLEMENT
