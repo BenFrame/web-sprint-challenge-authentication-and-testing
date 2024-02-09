@@ -4,22 +4,9 @@ const router = require('express').Router() ;
 const User = require('../user/user-model') ;
 const jwt = require('jsonwebtoken') ;
 const { JWT_SECRET } = require("../secrets/secrets-index") ;
-// const {validateUsername} = require('../middleware/restricted')
+const {tempMiddleware} = require('../middleware/restricted')
 
-const tempMiddleware = async ( req, res, next ) => {
-  const { username, password } = req.body;
 
-  if (! username || ! password) {
-    return res.status(400).json({ error: "username and password required" });
-  }
-
-  const existingUser = await User.findBy({ username });
-
-  if (existingUser) {
-    return res.status(400).json({ error: "username taken" });
-  }
-  next();
-}
 
 router.post('/register',  tempMiddleware, async ( req, res, next ) => {
   

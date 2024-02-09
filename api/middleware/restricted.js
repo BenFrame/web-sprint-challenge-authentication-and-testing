@@ -1,16 +1,24 @@
-const validateUsername = (req, res, next) => {
-  if(req.body.username === req.body.username){
-    res.status(401).json({message: 'Username taken'})
-  } else {
+const User = require('../user/user-model') ;
 
-    next();
+const tempMiddleware = async ( req, res, next ) => {
+  const { username, password } = req.body;
+
+  if (! username || ! password) {
+    return res.status(400).json({ error: "username and password required" });
   }
+
+  const existingUser = await User.findBy({ username });
+
+  if (existingUser) {
+    return res.status(400).json({ error: "username taken" });
+  }
+  next();
 }
 
 
 
 module.exports = {
-  validateUsername
+  tempMiddleware
 }
 
 /*
