@@ -1,5 +1,7 @@
 const User = require('../user/user-model') ;
-const {findBy} = require('../user/user-model')
+const {findBy} = require('../user/user-model') ;
+const jwt = require('jsonwebtoken') ;
+const {JWT_SECRET} = require('../secrets/secrets-index')
 
 const tempMiddleware = async ( req, res, next ) => {
   const { username, password } = req.body;
@@ -45,12 +47,25 @@ const checkUsernameExists = async (req, res, next) => {
      }
 }
 
+const restricted = (req, res, next) => {
+  const token = req.headers.authorization
+  jwt.verify(token, JWT_SECRET, (err, decodedToken) => {
+    if(err){
+      res.status(401).json({message: 'token invalid'})
+    } else {
+      req.decodedToken = decodedToken
+      next()
+    }
+  })
+}
+
 
 
 module.exports = {
   tempMiddleware,
   checkUsernameExists,
-  checkUsernameAndPassword
+  checkUsernameAndPassword,
+  restricted
 }
 
 /*
