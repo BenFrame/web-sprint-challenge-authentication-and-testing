@@ -16,7 +16,7 @@ const tempMiddleware = async ( req, res, next ) => {
   next();
 }
 
-const checkPassword = async (req, res, next) => {
+const checkUsernameAndPassword = async (req, res, next) => {
   const { username, password } = req.body;
 
   if (! username || ! password) {
@@ -32,11 +32,9 @@ const checkUsernameExists = async (req, res, next) => {
   
     try{
       const [user] = await findBy({username: req.body.username})
+
       if(!user) {
-        next({
-          status: 401, 
-          message: 'Invalid credentials'
-        })
+        res.status(401).json({message: "invalid credentials"})
       } else {
         req.user = user
         next()
@@ -51,7 +49,7 @@ const checkUsernameExists = async (req, res, next) => {
 module.exports = {
   tempMiddleware,
   checkUsernameExists,
-  checkPassword
+  checkUsernameAndPassword
 }
 
 /*
