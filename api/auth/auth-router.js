@@ -4,7 +4,7 @@ const router = require('express').Router() ;
 const User = require('../user/user-model') ;
 const jwt = require('jsonwebtoken') ;
 const { JWT_SECRET } = require("../secrets/secrets-index") ;
-const {tempMiddleware} = require('../middleware/restricted')
+const {tempMiddleware, checkUsernameExists} = require('../middleware/restricted')
 
 
 
@@ -63,13 +63,14 @@ router.post('/register',  tempMiddleware, async ( req, res, next ) => {
   */
 });
 
-router.post('/login', (req, res, next) => {
+router.post('/login', checkUsernameExists, async (req, res, next) => {
   if(bcrypt.compareSync(req.body.password, req.user.password)){
     const token = buildToken(req.user)
-    res.json({
-      
-      token,
-    })
+    
+    res.status(201).json({
+      message: `welcome, ${req.user.username}`,
+        token: `${token}`
+    });
   } else {
     next({ status: 401, message: 'Invalid credentials'})
   }
@@ -100,6 +101,7 @@ router.post('/login', (req, res, next) => {
 function buildToken(user){
   const payload = {
     username: user.username,
+    password: user.password
   }
   const options = { 
     expiresIn: '1d',
