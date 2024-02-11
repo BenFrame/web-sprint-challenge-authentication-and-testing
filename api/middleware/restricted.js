@@ -16,6 +16,18 @@ const tempMiddleware = async ( req, res, next ) => {
   next();
 }
 
+const checkPassword = async (req, res, next) => {
+  const { username, password } = req.body;
+
+  if (! username || ! password) {
+    return res.status(400).json({ error: "username and password required" });
+  }
+  next()
+}
+
+
+
+
 const checkUsernameExists = async (req, res, next) => {
   
     try{
@@ -38,7 +50,8 @@ const checkUsernameExists = async (req, res, next) => {
 
 module.exports = {
   tempMiddleware,
-  checkUsernameExists
+  checkUsernameExists,
+  checkPassword
 }
 
 /*
