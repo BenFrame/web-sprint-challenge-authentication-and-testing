@@ -7,9 +7,9 @@ const tempMiddleware = async ( req, res, next ) => {
     return res.status(400).json({ error: "username and password required" });
   }
 
-  const existingUser = await User.findBy({ username });
+  const existingUsersWithThisUsername = await User.findBy({ username });
 
-  if (existingUser) {
+  if ( existingUsersWithThisUsername.length > 0 ) {
     return res.status(400).json({ error: "username taken" });
   }
   next();
