@@ -63,7 +63,7 @@ router.post('/register',  tempMiddleware, async ( req, res, next ) => {
   */
 });
 
-router.post('/login', checkUsernameAndPassword, checkUsernameExists, restricted, async (req, res, next) => {
+router.post('/login', checkUsernameAndPassword, checkUsernameExists,  async (req, res, next) => {
   if(bcrypt.compareSync(req.body.password, req.user.password)){
     const token = buildToken(req.user)
     
